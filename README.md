@@ -94,3 +94,23 @@ pkg/controller/application/application_controller.go
 #### 7. Let create the logic that will deploy our application using a deployment!
 
 `https://github.com/jharrington22/application-operator/blob/master/pkg/controller/application/application_controller.go`
+
+#### 8. Create docker image
+
+`operator-sdk build -t application-operator`
+`docker tag application-operator aws_account_id.dkr.ecr.us-east-1.amazonaws.com/application-operator`
+`aws ecr get-login`
+`docker docker push aws_account_id.dkr.ecr.us-east-1.amazonaws.com/application-operator`
+
+
+### 9. Update our printer columns so that `kubectl get application` returns status
+
+```
+  additionalPrinterColumns:
+  - JSONPath: .status.replicas
+    name: Replicas
+    type: integer
+  - JSONPath: .status.applicationVersion
+    name: ApplicationVersion
+    type: string 
+```
