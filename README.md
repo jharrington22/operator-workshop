@@ -101,10 +101,10 @@ deploy/crds/application_v1alpha1_application_crd.yaml
 
 ```
   additionalPrinterColumns:
-  - JSONPath: .status.replicas
+  - JSONPath: .spec.replicas
     name: Replicas
     type: integer
-  - JSONPath: .status.applicationVersion
+  - JSONPath: .spec.applicationVersion
     name: ApplicationVersion
     type: string 
 ```
