@@ -53,7 +53,7 @@ API scaffolding, the most interesting file being for this workshop being;
 
 `git status` should show you our newly create and untracked files
 
-#### 4. Adding to our newly created scaffold lets up date our API types file which and define the Spec and Status fields for our Custom Resource
+#### 4. Adding to our newly created scaffold lets up date our API types file which and define the Spec and Status fields for our Custom Resource and then generate our CRD's and deepcopy type files.
 
 ```
 type ApplicationSpec struct {
@@ -74,6 +74,12 @@ type ApplicationStatus struct {
 	ApplicationVersion string `json:"applicationVersion"`
 }
 ```
+
+```
+operator-sdk generate k8s
+operator-sdk generate openapi
+
+```
 #### 5. Commit our current status
 `git add .`
 `git commit -m "Added CRD and updated types"`
@@ -87,3 +93,4 @@ pkg/controller/application/application_controller.go
 
 #### 7. Let create the logic that will deploy our application using a deployment!
 
+`https://github.com/jharrington22/application-operator/blob/master/pkg/controller/application/application_controller.go`
