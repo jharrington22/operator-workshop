@@ -20,6 +20,7 @@ Although this example is very basic, this operator could be extend to manage all
 
 #### 3. Install deps
 `make dep`
+
 `make install`
 
 #### 4. Check that its installed (if the command fails ensure you have $GOPATH in your $PATH)
@@ -33,6 +34,7 @@ operator-sdk --version
 
 #### 1. Ensure that you have created a the required directory structure under $GOPATH for your repository which will house our new operator code inside a git repo
 `mkdir $GOPATH/src/github.com/<YOUR_GITHUB_USERNAME>`
+
 `cd $GOPATH/src/github.com/<YOUR_GITHUB_USERNAME>`
 
 #### 2. Create our operator application-operator
@@ -82,6 +84,7 @@ operator-sdk generate openapi
 ```
 #### 5. Commit our current status
 `git add .`
+
 `git commit -m "Added CRD and updated types"`
 
 #### 6. Add our controller code
@@ -101,10 +104,10 @@ deploy/crds/application_v1alpha1_application_crd.yaml
 
 ```
   additionalPrinterColumns:
-  - JSONPath: .status.replicas
+  - JSONPath: .spec.replicas
     name: Replicas
     type: integer
-  - JSONPath: .status.applicationVersion
+  - JSONPath: .spec.applicationVersion
     name: ApplicationVersion
     type: string 
 ```
@@ -112,8 +115,11 @@ deploy/crds/application_v1alpha1_application_crd.yaml
 #### 9. Create and push docker image
 
 `operator-sdk build -t application-operator`
+
 `docker tag application-operator aws_account_id.dkr.ecr.us-east-1.amazonaws.com/application-operator`
+
 `aws ecr get-login`
+
 `docker docker push aws_account_id.dkr.ecr.us-east-1.amazonaws.com/application-operator`
 
 #### 10. Update image name in deployment
@@ -123,11 +129,18 @@ sed -i "" 's|REPLACE_IMAGE|aws_account_id.dkr.ecr.us-east-1.amazonaws.com/applic
 sed -i "" "s|REPLACE_NAMESPACE|application-operator-ns|g" deploy/role_binding.yaml
 ```
 
-#### 11. Apply CRDs, roles, role bindings and service account 
+#### 11. Apply CRD, roles, role bindings, service account and operator 
 
 ```
 kubectl create -f deploy/service_account.yaml
 kubectl create -f deploy/role.yaml
 kubectl create -f deploy/role_binding.yaml
+kubectl create -f deploy/crds/app_v1alpha1_appservice_crd.yaml
 kubectl create -f deploy/operator.yaml
 ```
+
+#### 12. Apply CR and watch the deployment get created! 
+
+`kubectl create -f deploy/crds/app_v1alpha1_appservice_cr.yaml`
+
+`oc get application`
