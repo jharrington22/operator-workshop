@@ -41,7 +41,7 @@ operator-sdk --version
 `operator-sdk new application-operator`
 
 #### 3. Lets add a new Custom Resource Definition (CRD) API which will recieve and store our Customer Resource (CR) changes. This will also create the basic configuration files we need to run the operator. 
-`operator-sdk add api --api-version=application.examplle.com/v1alpha1 --kind=Application`
+`operator-sdk add api --api-version=application.example.com/v1alpha1 --kind=Application`
 
 You should see that this command has also created the following manifests;
 deploy/crds/
