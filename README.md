@@ -123,11 +123,18 @@ sed -i "" 's|REPLACE_IMAGE|aws_account_id.dkr.ecr.us-east-1.amazonaws.com/applic
 sed -i "" "s|REPLACE_NAMESPACE|application-operator-ns|g" deploy/role_binding.yaml
 ```
 
-#### 11. Apply CRDs, roles, role bindings and service account 
+#### 11. Apply CRD, roles, role bindings, service account and operator 
 
 ```
 kubectl create -f deploy/service_account.yaml
 kubectl create -f deploy/role.yaml
 kubectl create -f deploy/role_binding.yaml
+kubectl create -f deploy/crds/app_v1alpha1_appservice_crd.yaml
 kubectl create -f deploy/operator.yaml
 ```
+
+#### 12. Apply CR and watch the deployment get created! 
+
+`kubectl create -f deploy/crds/app_v1alpha1_appservice_cr.yaml`
+
+`oc get application`
