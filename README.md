@@ -1,6 +1,6 @@
 # operator-workshop
 
-This workshop will take you through creating a Kubernetes operator that will deploy an application and enure the version running is the one that matches our spec. Will will be able to configure the number of pods using a predefined container image available [here](https://quay.io/jharrington22). Our CRD will have 2 configurable fields, `replicas` and `appliactionVersion`. 
+This workshop will take you through creating a Kubernetes operator that will deploy an application and enure the version running is the one that matches our spec. Will will be able to configure the number of pods using a predefined nginx container image. Our CRD will have 2 configurable fields, `replicas` and `appliactionVersion`. 
 
 This operator will function the same way as a kubernetes [deployment](
 https://kubernetes.io/docs/concepts/workloads/controllers/deployment/) does we will be able to do the following;
@@ -95,15 +95,9 @@ pkg/controller/application/application_controller.go
 
 `https://github.com/jharrington22/application-operator/blob/master/pkg/controller/application/application_controller.go`
 
-#### 8. Create docker image
+### 8. Update our printer columns so that `kubectl get application` returns status
 
-`operator-sdk build -t application-operator`
-`docker tag application-operator aws_account_id.dkr.ecr.us-east-1.amazonaws.com/application-operator`
-`aws ecr get-login`
-`docker docker push aws_account_id.dkr.ecr.us-east-1.amazonaws.com/application-operator`
-
-
-### 9. Update our printer columns so that `kubectl get application` returns status
+deploy/crds/application_v1alpha1_application_crd.yaml
 
 ```
   additionalPrinterColumns:
@@ -113,4 +107,27 @@ pkg/controller/application/application_controller.go
   - JSONPath: .status.applicationVersion
     name: ApplicationVersion
     type: string 
+```
+
+#### 9. Create and push docker image
+
+`operator-sdk build -t application-operator`
+`docker tag application-operator aws_account_id.dkr.ecr.us-east-1.amazonaws.com/application-operator`
+`aws ecr get-login`
+`docker docker push aws_account_id.dkr.ecr.us-east-1.amazonaws.com/application-operator`
+
+#### 10. Update image name in deployment
+
+```
+sed -i "" 's|REPLACE_IMAGE|aws_account_id.dkr.ecr.us-east-1.amazonaws.com/application-operator|g' deploy/operator.yaml
+sed -i "" "s|REPLACE_NAMESPACE|application-operator-ns|g" deploy/role_binding.yaml
+```
+
+#### 11. Apply CRDs, roles, role bindings and service account 
+
+```
+kubectl create -f deploy/service_account.yaml
+kubectl create -f deploy/role.yaml
+kubectl create -f deploy/role_binding.yaml
+kubectl create -f deploy/operator.yaml
 ```
